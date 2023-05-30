@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" 
+    integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+     <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+    <div class="container" id="border">
+    <img src="https://github.com/nager/Nager.Date/actions/workflows/dotnet.yml/badge.svg" alt="build,test and publish passing"><br><br>
+    <h2>📆 Nager.Date-<a href="https://date.nager.at/">official website</a></h2><hr>
+    <p>Discover the convenience of easily accessing holidays from <strong>over 100 countries</strong> with Nager.Date.Our popular project utilizies the power of .NET and offers a user-friendly public<a href="https://date.nager.at/Api">REST API</a> for seamless integration into your application.</p><br>
+    <p>you can find an overview of the supported countries <a href="https://date.nager.at/Country/Coverage">here</a>.</p><br>
+    <p>Need offline access to our functionally? No problem! We also provide solutions that allow you to use our services on your own infrastructure without an internet connection.Easily integrate our service into your system with the <a href="https://hub.docker.com/r/nager/nager-date">Docker</a> container or the <a href="https://www.nuget.org/packages/Nager.Date">NuGe</a> package.Both options require a license key.As a <a href="https://github.com/sponsors/nager">sponser of nager</a>, you get a license key. </p><br>
+    <h3>How can I use it?</h3><hr><br>
+    <p>Easily create a client in your preffered programming language by utilizing our <a href="https://date.nager.at/swagger">Swagger definition</a>. Find all the necessary information in our API section.Get more details about client generation in the <a href="https://openapi-generator.tech/">documentation</a>.</p><br>
+    <h3>Examples</h3><br>
+    <details>
+        <summary>
+            .NET/C# (click to expand)
+        </summary>
+        <p>There are two ways to use our service</p><br>
+        <a href="https://www.nuget.org/packages/Nager.Holiday">NuGet-Nager.Holiday</a><br><br>
+        <pre><code id="default">pm> install-package Nager.Holiday</code></pre><br>
+        <h4>copy code</h4><br>
+       <pre > 
+        <code id="ok" class="nav" >
+using System;
+using System.Net.Http;
+using System.Text.Json;
+
+var jsonSerializerOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+using var httpClient = new HttpClient();
+using var response = await httpClient.GetAsync("https://date.nager.at/api/v3/publicholidays/2022/US");
+if (response.IsSuccessStatusCode)
+{
+    using var jsonStream = await response.Content.ReadAsStreamAsync();
+    var publicHolidays = JsonSerializer.Deserialize<PublicHoliday[]>(jsonStream, jsonSerializerOptions);
+}
+
+class PublicHoliday
+{
+    public DateTime Date { get; set; }
+    public string LocalName { get; set; }
+    public string Name { get; set; }
+    public string CountryCode { get; set; }
+    public bool Fixed { get; set; }
+    public bool Global { get; set; }
+    public string[] Counties { get; set; }
+    public int? LaunchYear { get; set; }
+    public string[] Types { get; set; }
+}
+        </code></pre>
+    </details>
+    <details>
+        <summary>PHP (click to expand)</summary>
+        <p>This example use the <a href="https://github.com/guzzle/guzzle">guzzle</a> project</p><br>
+        <pre>
+         <code id="ok" class="nav">
+            <?php
+require_once 'vendor/autoload.php';
+$client = new \GuzzleHttp\Client();
+$response = $client->request('GET', 'https://date.nager.at/api/v3/publicholidays/2022/US');
+if ($response->getStatusCode() == 200) {
+    $json = $response->getBody();
+    print_r(json_decode($json));
+}
+?>
+
+        </code>
+    </pre>
+    </details>
+    <details>
+        <summary>Java (click to expand)</summary>
+        <p>This example use the springframework.Code tested with <a href="https://onecompiler.com/">onecompiler.com</a></p><br>
+        <pre><code>Main.java</code></pre><br>
+        <pre>
+            <code id="ok" class="nav">
+                import java.util.*;
+                import org.springframework.web.client.RestTemplate;
+                import com.google.gson.*;
+                
+                public class Main {
+                  public static void main(String[] args) {
+                    System.out.println("get holidays");
+                    String json = new RestTemplate().getForObject("https://date.nager.at/api/v3/publicholidays/2022/CH", String.class);
+                    
+                    Gson gson = new Gson();
+                    PublicHoliday[] userArray = gson.fromJson(json, PublicHoliday[].class);  
+                
+                    for(PublicHoliday publicHoliday : userArray) {
+                      System.out.print(publicHoliday.date);
+                      System.out.print(" ");
+                      System.out.print(publicHoliday.name);
+                      System.out.print(" ");
+                      System.out.print(String.join(",", publicHoliday.counties ?? new String[0]));
+                      System.out.print(" ");
+                      System.out.println(publicHoliday.localName);
+                    }
+                  }
+                }
+            </code>
+        </pre>
+    <pre><code id="default">PublicHoliday.java</code></pre><br>
+    <pre>
+        <code id="ok" class="nav">
+            public class PublicHoliday {
+                public String date;
+                public String localName;
+                public String name;
+                public String countryCode ;
+                public Boolean fixed;
+                public Boolean global;
+                public String[] counties;
+                public String[] types;
+              }
+        </code>
+    </pre>
+    <pre>
+        <code id="default">build.gradle</code>
+    </pre>
+    <pre>
+        <code id="ok" class="nav">
+apply plugin:'application'
+mainClassName = 'Main'
+
+run { standardInput = System.in }
+sourceSets { main { java { srcDir './' } } }
+
+repositories {
+  jcenter()
+}
+
+dependencies {
+  implementation 'org.springframework.boot:spring-boot-starter-web:2.6.7';
+  implementation 'com.google.code.gson:gson:2.10.1';
+}
+        </code>
+    </pre>
+</details>
+<details>
+    <summary>
+        Python (click to expand)
+    </summary><br>
+    <pre><code id="default">main.py</code></pre><br>
+    <pre>
+        <code id="ok" class="nav">
+import json
+import requests
+
+response = requests.get('https://date.nager.at/api/v3/publicholidays/2022/US')
+public_holidays = json.loads(response.content)
+
+for public_holiday in public_holidays:
+  print(public_holiday['date'])
+    </code>
+</pre>
+</details><br>
+<h3>offline solution</h3><hr><br>
+<p>Don't let internet connectivity issues disrupt your workflow.Our offline solutions enable you to use our service on your own infrastructure without an internet connection.With a sponsorship you get the license key to use the variants locally without a dependancy to our REST API.</p><br>
+<h3>NuGet</h3><br>
+<p>The NuGet package is available via <a href="https://www.nuget.org/packages/Nager.Date">NuGet</a></p><br>
+<pre>
+    <code id="default">
+        PM> install-package Nager.Date
+    </code>
+</pre><br>
+<details>
+    <summary>Code Examples (click to expand)</summary><br>
+    <h3>Examples for <h2>.NET (NuGet package)</h2></h3><hr><br>
+    <h4>Set the license key</h4><br>
+    <pre>
+        <code>DateSystem.LicenseKey = "LicenseKey1234";</code>
+    </pre><br>
+    <h3>Get all publicHolidays of a country and year</h3><br>
+    <pre>
+        <code id="ok" class="nav">
+            var publicHolidays = DateSystem.GetPublicHolidays(2021, "DE");
+            foreach (var publicHoliday in publicHolidays)
+            {
+                //publicHoliday...
+                //publicHoliday.Date -> The date
+                //publicHoliday.LocalName -> The local name
+                //publicHoliday.Name -> The english name
+                //publicHoliday.Fixed -> Is this public holiday every year on the same date
+                //publicHoliday.Global -> Is this public holiday in every county (federal state)
+                //publicHoliday.Counties -> Is the public holiday only valid for a special county ISO-3166-2 - Federal states
+                //publicHoliday.Type -> Public, Bank, School, Authorities, Optional, Observance
+            }
+    </code>
+</pre><br>
+<h3>Get all publicHolidays for a date range</h3><br>
+<pre>
+    <code id="ok" class="nav">
+        var startDate = new DateTime(2016, 5, 1);
+        var endDate = new DateTime(2021, 5, 31);
+        var publicHolidays = DateSystem.GetPublicHolidays(startDate, endDate, CountryCode.DE);
+        foreach (var publicHoliday in publicHolidays)
+        {
+            //publicHoliday...
+        }
+</code>
+</pre><br>
+<h3>check if a date is a public holiday</h3><br>
+<pre>
+    <code id="ok" class="nav">
+var date = new DateTime(2021, 1, 1);
+if (DateSystem.IsPublicHoliday(date, CountryCode.DE))
+{
+    Console.WriteLine("Is public holiday");
+}
+    </code>
+</pre><br>
+<h3>Check if a date is a weekend day</h3><br>
+<pre>
+    <code id="ok" class="nav">
+var date = new DateTime(2021, 1, 1);
+if (DateSystem.IsWeekend(date, CountryCode.DE))
+{
+    Console.WriteLine("Is weekend");
+}
+    </code>
+</pre><br>
+
+</details>
+<h3>Docker</h3><br>
+<p>The Docker container is available via <a href="https://hub.docker.com/r/nager/nager-date">Docker Hub</a> To run a local instance of the Docker image run the following command</p>
+<pre><code id="default">docker run -p 80:80 nager/nager-date</code></pre><br>
+<h3>Holiday types</h3><hr><br>
+<p>what variants of holidays are supported by<code id="default1">nager.Date</code></p><br>
+<table border>
+    <tr>
+    <th>Type</th>
+    <th>Description</th>
+    </tr>
+    <tr>
+        <td>public</td>
+        <td>public holiday</td>
+    </tr>
+    <tr>
+        <td>Bank</td>
+        <td>Bank holiday,banks and officers are closed</td>
+    </tr>
+    <tr>
+        <td>School</td>
+        <td>School holiday,schools are closed</td>
+    </tr>
+    <tr>
+        <td>Authorities</td>
+        <td>Authorities are closed</td>
+    </tr>
+    <tr>
+        <td>Optional</td>
+        <td>Majority of people take a day off</td>
+    </tr>
+    <tr>
+        <td>Observance</td>
+        <td>Optional festivity,no paid day off</td>
+    </tr>
+</table><br>
+<h3>Areas of Application</h3><hr>
+<br>
+<p>There are several business fields in which it is important to know the holidays in different countries.</p><br>
+<ul>
+    <li><strong>E-commerce:</strong> If an online retailer sells its products in different countries,it should know the holidays in these countries to adjust delivery times and customer service accordingly.</li><br>
+    <li><strong>Travel industry:</strong>A tour operator should know the holidays of the countries to which it offers trips,to alert its customers to special events or closed attractions.</li><br>
+    <li><strong>Staff scheduling:</strong>Companies with branches in several countries must know the holidays in each country to able to plan their staff needs accordingly.</li><br>
+    <li><strong>Financial industry:</strong>Banks and financial institutions should know the holidays in the countries in which they conduct business to ensure that transfers and transactions are performed on time and to estimate the impact of holidays on the foreign exchange market.</li><br>
+    <li><strong>Logistics and supply chains:</strong>Companies managing logistics or supply chains across several countries, must know the holidays in these countries to adjust planning and supply chain decisions.</li><br>
+    <li><strong>Telephone systems:</strong>To automatically turn on the answering machine on holidays.</li><br>
+    <li><strong>Time recording:</strong>To automatically fill the missing hours with the normal working hours.</li>
+
+</ul>
+<br>
+<h3>Articles about this project</h3><hr>
+<br>
+<ul>
+    <li><a href="http://blog.ploeh.dk/2017/04/24/simple-holidays/">Mark seemann-simple holidays</a></li>
+    <li><a href="https://www.youtube.com/watch?v=oS_uvbEV4Pw">YouTube use the NuGet package</a></li>
+    <li><a href="https://www.dotnetpro.de/core/frameworks/feiertagsrechner-2661291.html">dotnetpro-Feietagsrechner(German)</a></li>
+</ul>
+
+
+
+
+  </div>
+  <script src="script2.js"></script>
+  <script src="js/jquery.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+</body>
+</html>
